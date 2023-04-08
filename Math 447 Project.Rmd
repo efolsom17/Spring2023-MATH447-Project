@@ -1,6 +1,6 @@
 ---
 title: "Math 447 Project"
-author: "Eric Folsom"
+author: " "
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
