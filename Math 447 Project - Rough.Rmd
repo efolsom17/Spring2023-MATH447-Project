@@ -9,6 +9,9 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+HEY DID THIS WORK?
+
+
 So far everything below in this document is the default Rmarkdown document. Feel free to add your name to the "author" sction in the header. You can download this file and edit it in R to make sure all the code works, but if you only need to edit the text you can edit it on this repo. I'll try to get everyone up to speed on how we should use this for managing edits to our project in person.
 
 
