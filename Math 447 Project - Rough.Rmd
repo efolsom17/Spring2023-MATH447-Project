@@ -8,7 +8,7 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-Dataset link: 
+Dataset link: https://www.kaggle.com/datasets/rdoume/beerreviews
 
 Informative Project title: Predicting the Popularity of Beer
 
