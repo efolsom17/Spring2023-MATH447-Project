@@ -10,11 +10,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 Dataset link: https://www.kaggle.com/datasets/rdoume/beerreviews
 
-Informative Project title: Predicting the Popularity of Beer
+Informative Project title: Predicting the Popularity of Different Beers
 
 The team Name: Stout-asticians
 
-Research Goal (with short description): The goal of this project is to predict the future popularity of beers given certain factors. We will be analyzing a dataset to determine which keywords, type, brand, aroma, style, apperance, taste and so forth affect what beers people prefer. Using this will we crate predictions on beer popularity. 
+Research Goal (with short description): The goal of this project is to predict the future popularity of beers given certain factors. We will be analyzing a dataset to determine which keywords, type, brand, aroma, style, apperance, taste and so forth affect what beers people prefer. Using this will we create predictions on beer popularity. 
 
 Note: submit as PDF
 
