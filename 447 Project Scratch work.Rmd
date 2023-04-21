@@ -8,6 +8,21 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+Dataset link: https://www.kaggle.com/datasets/rdoume/beerreviews
+
+Informative Project title: Predicting the Popularity of Beer
+
+The team Name: Stout-asticians
+
+Research Goal (with short description): The goal of this project is to predict the future popularity of beers given certain factors. We will be analyzing a dataset to determine which keywords, type, brand, aroma, style, apperance, taste and so forth affect what beers people prefer. Using this will we crate predictions on beer popularity. 
+
+Note: submit as PDF
+
+![image](https://user-images.githubusercontent.com/130256135/232345854-ae249167-e054-46ad-8efe-4823c180d7e3.png)
+
+
+So far everything below in this document is the default Rmarkdown document. Feel free to add your name to the "author" sction in the header. You can download this file and edit it in R to make sure all the code works, but if you only need to edit the text you can edit it on this repo. I'll try to get everyone up to speed on how we should use this for managing edits to our project in person.
+
 
 ## R Markdown
 
