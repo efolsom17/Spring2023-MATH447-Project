@@ -1,6 +1,6 @@
 ---
-title: "Stout-asticians"
-author: "Eric Folsom, Cameron Bayer, Delaney Green"
+title: "Predicting the Popularity of Different Beers"
+author: "Eric Folsom, Cameron Bayer, Delaney Green, Eve Halsne"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
