@@ -20,26 +20,4 @@ Note: submit as PDF
 
 ![image](https://user-images.githubusercontent.com/130256135/232345854-ae249167-e054-46ad-8efe-4823c180d7e3.png)
 
-
-So far everything below in this document is the default Rmarkdown document. Feel free to add your name to the "author" sction in the header. You can download this file and edit it in R to make sure all the code works, but if you only need to edit the text you can edit it on this repo. I'll try to get everyone up to speed on how we should use this for managing edits to our project in person.
-
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Notes from talking with Kimi
