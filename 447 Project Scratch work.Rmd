@@ -20,4 +20,12 @@ Note: submit as PDF
 
 ![image](https://user-images.githubusercontent.com/130256135/232345854-ae249167-e054-46ad-8efe-4823c180d7e3.png)
 
+```{r}
+
+```
+
 # Notes from talking with Kimi
+
+We are gonna treat our data as continous, Try to do classification on the names of the beer. We can do k-nearest neighbors, might be useful. We can use methods from chapter 8.
+
+Sorry took a while for me to commit this, if anyone has any more notes from our meeting on tuesday please include them
