@@ -1,0 +1,7 @@
+##ABSTRACT/BACKKGROUND##
+
+Beer and modern statistics share a surprising historical link. If it were not for William S. Gosset, a brewer at Guiness at the turn of the 20th century, we would not
+have Student's t-test, a hypothesis testing method that we use to this day. As statisticians from Washington state, which grows approximately three quarters of all the
+hops in the US, we have a natural interest in the creation and quality of beer. In this project, we use a dataset of ~1.5 million reviews from BeerAdvocate, one of the
+largest and oldest online resources for beer reviews, discussions, and events. By using a combination of classification and regression methods, our project takes a given
+beer and personal review to predict and recommend future beers to the reviewer.
