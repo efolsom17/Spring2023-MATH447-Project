@@ -19,3 +19,6 @@ abv.dot<-ggplot(beer2, aes(beer_abv))
 abv.scat<-ggplot(beer2, aes(beer_beerid, beer_abv))
 abv.scat+geom_point()
 abv.dot+geom_dotplot()
+
+
+
