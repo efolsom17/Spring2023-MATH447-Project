@@ -30,6 +30,31 @@
       ],
       "Hash": "bc727aba82bcda74db0bbe188ec6757c"
     },
+    "GGally": {
+      "Package": "GGally",
+      "Version": "2.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "RColorBrewer",
+        "dplyr",
+        "forcats",
+        "ggplot2",
+        "grDevices",
+        "grid",
+        "gtable",
+        "lifecycle",
+        "plyr",
+        "progress",
+        "reshape",
+        "rlang",
+        "scales",
+        "tidyr",
+        "utils"
+      ],
+      "Hash": "022f78c8698724b326f1838b1a98cafa"
+    },
     "MASS": {
       "Package": "MASS",
       "Version": "7.3-59",
@@ -80,6 +105,17 @@
         "R"
       ],
       "Hash": "45f0398006e83a5b10b72a90663d8d8c"
+    },
+    "Rcpp": {
+      "Package": "Rcpp",
+      "Version": "1.0.10",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "methods",
+        "utils"
+      ],
+      "Hash": "e749cae40fa9ef469b6050959517453c"
     },
     "askpass": {
       "Package": "askpass",
@@ -949,6 +985,17 @@
       ],
       "Hash": "01f28d4278f15c76cddbea05899c5d6f"
     },
+    "plyr": {
+      "Package": "plyr",
+      "Version": "1.8.8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp"
+      ],
+      "Hash": "d744387aef9047b0b48be2933d78e862"
+    },
     "prettyunits": {
       "Package": "prettyunits",
       "Version": "1.1.1",
@@ -1115,6 +1162,17 @@
         "withr"
       ],
       "Hash": "d66fe009d4c20b7ab1927eb405db9ee2"
+    },
+    "reshape": {
+      "Package": "reshape",
+      "Version": "0.8.9",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "plyr"
+      ],
+      "Hash": "603d56041d7d4fa3ceb1864b3f6ee6b1"
     },
     "rlang": {
       "Package": "rlang",
