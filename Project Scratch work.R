@@ -24,18 +24,22 @@ map2<-select(beer_map, beer_name, beer_style)
 map2<-map2%>%distinct(beer_name,.keep_all = TRUE)
 
 #cleaning data
-beer_by_name<-beer2%>%
+beer_avg<-beer2%>%
   group_by(beer_name)%>%
   summarise(across(c(review_overall, review_aroma, review_appearance, review_palate, review_taste, beer_abv), mean))%>%
   filter(!is.na(beer_abv))
+beer_avg<-left_join(beer_avg, map2, by="beer_name")
+beer_avg<-as_tibble(beer_avg)
+beer_avg.df<-column_to_rownames(beer_avg,var='beer_name')
+beer_avg.fac_style<-beer_avg%>%mutate(beer_style=as.factor(beer_style))
+head(beer_avg)
 
-beer_by_name<-left_join(beer_by_name, map2, by="beer_name")
-beer_by_name<-column_to_rownames(beer_by_name,var='beer_name')
+View(beer_avg)
+class(beer_avg)
 
-View(beer_by_name)
-length(beer_by_name$beer_abv)
+length(beer_avg$beer_abv)
 
-
+head(beer_avg.fac_style)
 #beer_by_style<-beer2%>%
 #  group_by(beer_style)%>%
 #  summarise(across(c(review_overall, review_aroma, review_appearance, review_palate, review_taste, beer_abv), mean))%>%
