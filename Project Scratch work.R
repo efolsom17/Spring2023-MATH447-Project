@@ -108,7 +108,8 @@ head(beer.clean.fac_style)
 rm(beer_n,beer_var,beer_avg, colnames.new.var)
 
 #un-comment if you want to save a .csv of the data
-#write_csv(beer.clean, "beer_reviews_clean.csv")
+#write_csv(beer.clean, "beer_reviews_average.csv")
+#write_csv(beer2, "beer_reviews_clean.csv")
 
 #stuff we probably won't use, but if we need it just uncomment the code
 #View(beer_var)
