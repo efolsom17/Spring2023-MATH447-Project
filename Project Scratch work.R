@@ -97,7 +97,7 @@ View(beer_avg)
 beer_avg.df<-column_to_rownames(beer_avg,var="beer_name")
 head(beer_avg.df)
 
-beer.clean.factor<-beer.clean%>%mutate(beer_style=as.factor(beer_style),beer_name=as.factor(beer_name))
+
 #need this for something else I think. If we want to use some form of logistic regression
 beer_avg.fac_style<-beer_avg.df%>%mutate(beer_style=as.factor(beer_style))
 head(beer_avg.fac_style)
