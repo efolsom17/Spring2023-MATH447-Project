@@ -97,6 +97,7 @@ View(beer_avg)
 beer_avg.df<-column_to_rownames(beer_avg,var="beer_name")
 head(beer_avg.df)
 
+beer.clean.factor<-beer.clean%>%mutate(beer_style=as.factor(beer_style),beer_name=as.factor(beer_name))
 #need this for something else I think. If we want to use some form of logistic regression
 beer_avg.fac_style<-beer_avg.df%>%mutate(beer_style=as.factor(beer_style))
 head(beer_avg.fac_style)
@@ -108,8 +109,10 @@ View(beer.avg_list)
 #raw list of the data, broken down by beer style
 beer.raw_list<-split(beer.clean, beer.clean$beer_style)
 View(beer.raw_list)
+
+
 #cleaning up the R environment
-rm(beer_n,beer_var, colnames.new.var)
+#rm(beer_n,beer_var, colnames.new.var)
 
 #un-comment if you want to save a .csv of the data
 #write_csv(beer_avg, "beer_reviews_average.csv")
@@ -154,7 +157,7 @@ taste.plot<-ggplot(beer_avg, aes(review_taste,review_overall, color=beer_style))
 abv.plot+geom_point()+geom_smooth(method = lm, se = FALSE)+
   theme(legend.position = "none")
 abv.plot.ungrouped<-ggplot(beer_avg, aes(beer_abv,review_overall))
-abv.plot.ungrouped+geom_point()+geom_smooth()+
+abv.plot.ungrouped+geom_point()+geom_smooth(method = lm, se = FALSE)+
   theme(legend.position = "none")
 
 #R really doesn't want to make a heatmap, this will be figured out later
@@ -182,22 +185,28 @@ ggplot(data = heatmap_data_melt, aes(x = names, y = name, fill = value)) +
 
 
 #testing some scatter plot stuff
-ggplot(beer.clean, aes(beer_abv, review_overall))+geom_point()
+ggplot(beer.clean, aes(beer_abv, review_overall, color=beer_style))+geom_point()
 abv.dot<-ggplot(beer.clean, aes(beer_abv))
-abv.scat<-ggplot(beer.clean, aes(beer_beerid, beer_abv))
+abv.scat<-ggplot(beer.clean, aes(beer_beerid, beer_abv, color=beer_style))
 abv.scat+geom_point()
 abv.dot+geom_dotplot()
 
-pc.beer<-prcomp(beer_avg.fac_style[,-1], scale=TRUE)
-pc.beer$rotation
-biplot(pc.beer, scale=0)
-pc.beer.var<-pc.beer$sdev^2
-pve.beer<-pc.beer.var/sum(pc.beer.var)
-temp.x<-c(1:length(pve.beer))
-pve.df<-data.frame(pve.beer,temp.x)
-scree.beer<-ggplot(pve.df, aes(x=temp.x, y=pve.beer))
-scree.beer+geom_point()+geom_line()
-temp.x
+#PCA
+pc.beer.avg<-prcomp(beer_avg.fac_style[,-1], scale=TRUE)
+pc.beer.avg$rotation
+biplot(pc.beer.avg, scale=0)
+pc.beer.avg.var<-pc.beer.avg$sdev^2
+pve.beer.avg<-pc.beer.avg.var/sum(pc.beer.avg.var)
+temp.x<-c(1:length(pve.beer.avg))
+pve.avg.df<-data.frame(pve.beer.avg,temp.x)
+scree.beer.avg<-ggplot(pve.avg.df, aes(x=temp.x, y=pve.beer.avg))
+avg.scree<-scree.beer.avg+geom_point()+geom_line()
+
+######This doesn't really work :(
+beer.clean.factor<-beer.clean%>%mutate(beer_style=as.factor(beer_style),beer_name=as.factor(beer_name))
+
+pc.beer.clean<-prcomp(beer.clean.factor, scale=TRUE)
+
 detach(beer_avg)
 
 ####model creation####
