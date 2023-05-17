@@ -2,13 +2,14 @@
 
 rm(list=ls())
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-install.packages(c("tidyverse","neuralnet","conflicted", "GGally","randomForest"))
+install.packages(c("tidyverse","neuralnet","conflicted", "GGally","randomForest","patchwork"))
 library(tidyverse)
 library(neuralnet)
 library(conflicted)
 library(GGally)
 library(randomForest)
 library(reshape)
+library(patchwork)
 
 conflicts_prefer(dplyr::select)
 conflicts_prefer(dplyr::filter)
@@ -59,6 +60,7 @@ beer_avg<-beer.clean%>%
 beer_avg<-left_join(beer_avg, map2, by="beer_name")
 beer_avg<-as_tibble(beer_avg)
 
+beer_avg.novar<-beer_avg
 #getting the variance of each review
 beer_var<-beer.clean%>%
   group_by(beer_name)%>%
@@ -82,6 +84,8 @@ beer_avg<-beer_avg%>%
   add_column(n_reviews=beer_n$n,review_overall_Var=beer_var$review_overall_Var,
                review_aroma_Var=beer_var$review_aroma_Var,review_appearance_Var=beer_var$review_appearance_Var,
                review_palate_Var= beer_var$review_palate_Var,review_taste_Var=beer_var$review_taste_Var)
+beer_avg.novar<-beer_avg.novar%>%
+  add_column(n_reviews=beer_n$n)
 #ordering the columns in a way that it is easy to view raw
 beer_avg<-beer_avg%>%
   select(beer_name, beer_style, beer_abv, 
@@ -97,18 +101,24 @@ View(beer_avg)
 beer_avg.df<-column_to_rownames(beer_avg,var="beer_name")
 head(beer_avg.df)
 
+beer_avg.novar.df<-column_to_rownames(beer_avg.novar, var="beer_name")
 
 #need this for something else I think. If we want to use some form of logistic regression
 beer_avg.fac_style<-beer_avg.df%>%mutate(beer_style=as.factor(beer_style))
 head(beer_avg.fac_style)
 
+beer_novar.fac<-beer_avg.novar.df%>%mutate(beer_style=as.factor(beer_style))
 #List object, each item in the list corresponds to the style of beer
 beer.avg_list<-split(beer_avg, beer_avg$beer_style)
 View(beer.avg_list)
-
+beer_avg.novar.list<-split(beer_avg.novar, beer_avg.novar$beer_style)
 #raw list of the data, broken down by beer style
 beer.raw_list<-split(beer.clean, beer.clean$beer_style)
 View(beer.raw_list)
+
+#list by beer name (raw data)
+
+beer_name.list<-split(beer.clan, beer.clean$beer_name)
 
 
 #cleaning up the R environment
@@ -194,13 +204,38 @@ abv.dot+geom_dotplot()
 #PCA
 pc.beer.avg<-prcomp(beer_avg.fac_style[,-1], scale=TRUE)
 pc.beer.avg$rotation
-biplot(pc.beer.avg, scale=0)
+#biplot(pc.beer.avg, scale=0)
 pc.beer.avg.var<-pc.beer.avg$sdev^2
 pve.beer.avg<-pc.beer.avg.var/sum(pc.beer.avg.var)
 temp.x<-c(1:length(pve.beer.avg))
 pve.avg.df<-data.frame(pve.beer.avg,temp.x)
 scree.beer.avg<-ggplot(pve.avg.df, aes(x=temp.x, y=pve.beer.avg))
 avg.scree<-scree.beer.avg+geom_point()+geom_line()
+avg.scree
+pve.cum.avg<-data.frame(cumsum(pve.beer.avg),temp.x)
+pve.cum.avg
+cum.scree.beer<-ggplot(pve.cum.avg, aes(x=temp.x,y=cumsum.pve.beer.avg.))
+scree.cum<-cum.scree.beer+geom_point()+geom_line()
+scree.cum
+plot.layout<-"
+11#
+#22
+"
+avg.scree+scree.cum+plot_layout(design=plot.layout)
+
+pc.novar<-prcomp(beer_novar.fac[,-7],scale=TRUE)
+pc.novar$rotation
+#biplot(pc.novar, scale=0)
+pc.novar_var<-pc.novar$sdev^2
+pve.novar<-pc.novar_var/sum(pc.novar_var)
+x.novar<-c(1:length(pve.novar))
+pve.novar.df<-data.frame(pve.novar,x.novar)
+scree.novar<-ggplot(pve.novar.df, aes(x=x.novar, pve.novar))+goem_line()+geom_point()
+cum.pve.novar<-cumsum(pve.novar)
+cum.novar.df<-data.frame(cum.pve.novar, x.novar)
+cum.scree.novar<-ggplot(cum.novar.df, aes(x=x.novar, y=cum.pve.novar))
+
+scree.novar+cum.scree.novar+plot_layout(design=plot.layout)
 
 ######This doesn't really work :(
 beer.clean.factor<-beer.clean%>%mutate(beer_style=as.factor(beer_style),beer_name=as.factor(beer_name))
