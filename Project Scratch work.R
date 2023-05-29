@@ -297,7 +297,7 @@ plot(1:100, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of
 
 
 set.seed(123) # Set seed for reproducibility
-kmeans_result <- kmeans(numeric_df, centers=100)
+kmeans_result <- kmeans(numeric_df, centers=440, iter.max = 100)
 
 # Add the cluster assignments back to the original data
 beer_avg$cluster <- kmeans_result$cluster
@@ -342,5 +342,6 @@ get_cluster_beers <- function(beer_name, N = 5) {
   }
 }
 
-get_cluster_beers("Coors",10)
+get_cluster_beers("Coors")
+get_cluster_beers("Natural Light",10)
 
