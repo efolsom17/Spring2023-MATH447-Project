@@ -60,19 +60,19 @@ beer_avg<-beer.clean%>%
 beer_avg<-left_join(beer_avg, map2, by="beer_name")
 beer_avg<-as_tibble(beer_avg)
 
-beer_avg.novar<-beer_avg
+beer_avg.nosd<-beer_avg
 #getting the variance of each review
-beer_var<-beer.clean%>%
+beer_sd<-beer.clean%>%
   group_by(beer_name)%>%
-  summarise(across(c(review_overall, review_aroma, review_appearance, review_palate, review_taste), var))
+  summarise(across(c(review_overall, review_aroma, review_appearance, review_palate, review_taste), sd))
 #for the beers where there were only one review, there is 0 variance,
 #but because of the sample variance formula, we would be dividing by 0, which induced NAs
-beer_var<-beer_var%>%replace_na(list(review_overall=0,review_aroma=0,review_appearance=0,review_palate=0,review_taste=0))
+beer_sd<-beer_sd%>%replace_na(list(review_overall=0,review_aroma=0,review_appearance=0,review_palate=0,review_taste=0))
 
 #renaming some columns for later use
-colnames.new.var<-c( review_overall_Var="review_overall",review_aroma_Var="review_aroma",review_appearance_Var= "review_appearance",
-                     review_palate_Var= "review_palate",review_taste_Var="review_taste")
-beer_var<-rename(beer_var, all_of(colnames.new.var))
+colnames.new.sd<-c( review_overall_sd="review_overall",review_aroma_sd="review_aroma",review_appearance_sd= "review_appearance",
+                     review_palate_sd= "review_palate",review_taste_sd="review_taste")
+beer_sd<-rename(beer_sd, all_of(colnames.new.sd))
 
 #calcualting the number of reviews for each beer
 beer_n<-beer.clean%>%
@@ -81,18 +81,18 @@ beer_n<-beer.clean%>%
 
 #putting everything from above together
 beer_avg<-beer_avg%>%
-  add_column(n_reviews=beer_n$n,review_overall_Var=beer_var$review_overall_Var,
-               review_aroma_Var=beer_var$review_aroma_Var,review_appearance_Var=beer_var$review_appearance_Var,
-               review_palate_Var= beer_var$review_palate_Var,review_taste_Var=beer_var$review_taste_Var)
-beer_avg.novar<-beer_avg.novar%>%
+  add_column(n_reviews=beer_n$n,review_overall_sd=beer_sd$review_overall_sd,
+               review_aroma_sd=beer_sd$review_aroma_sd,review_appearance_sd=beer_sd$review_appearance_sd,
+               review_palate_sd= beer_sd$review_palate_sd,review_taste_sd=beer_sd$review_taste_sd)
+beer_avg.nosd<-beer_avg.nosd%>%
   add_column(n_reviews=beer_n$n)
 #ordering the columns in a way that it is easy to view raw
 beer_avg<-beer_avg%>%
   select(beer_name, beer_style, beer_abv, 
-    n_reviews, review_overall, review_overall_Var, review_aroma, 
-    review_aroma_Var, review_appearance, review_appearance_Var, review_palate, 
-    review_palate_Var,  review_taste, review_taste_Var)
-
+    n_reviews, review_overall, review_overall_sd, review_aroma, 
+    review_aroma_sd, review_appearance, review_appearance_sd, review_palate, 
+    review_palate_sd,  review_taste, review_taste_sd)
+beer_avg<-beer_avg%>%mutate(beer_avg, total_average_score= (review_overall+review_aroma+review_appearance+review_palate+review_taste)/5)
 
 head(beer_avg)
 View(beer_avg)
@@ -101,24 +101,24 @@ View(beer_avg)
 beer_avg.df<-column_to_rownames(beer_avg,var="beer_name")
 head(beer_avg.df)
 
-beer_avg.novar.df<-column_to_rownames(beer_avg.novar, var="beer_name")
+beer_avg.nosd.df<-column_to_rownames(beer_avg.nosd, var="beer_name")
 
 #need this for something else I think. If we want to use some form of logistic regression
 beer_avg.fac_style<-beer_avg.df%>%mutate(beer_style=as.factor(beer_style))
 head(beer_avg.fac_style)
 
-beer_novar.fac<-beer_avg.novar.df%>%mutate(beer_style=as.factor(beer_style))
+beer_novsd.fac<-beer_avg.nosd.df%>%mutate(beer_style=as.factor(beer_style))
 #List object, each item in the list corresponds to the style of beer
 beer.avg_list<-split(beer_avg, beer_avg$beer_style)
 View(beer.avg_list)
-beer_avg.novar.list<-split(beer_avg.novar, beer_avg.novar$beer_style)
+beer_avg.nosd.list<-split(beer_avg.nosd, beer_avg.nosd$beer_style)
 #raw list of the data, broken down by beer style
 beer.raw_list<-split(beer.clean, beer.clean$beer_style)
 View(beer.raw_list)
 
 #list by beer name (raw data)
 
-beer_name.list<-split(beer.clan, beer.clean$beer_name)
+beer_name.list<-split(beer.clean, beer.clean$beer_name)
 
 
 #cleaning up the R environment
@@ -151,6 +151,7 @@ styles<-distinct(beer_avg, beer_style)
 
 #pairs plot, kinda cool looking, WARNING: will turn your macbook into a fighter-jet
 ggpairs(beer_avg, columns=c(3,4,5,7,9,11,13),aes(color = beer_style, alpha = 0.5))
+
 
 #I think we need to remove some outliers from the abv
 
@@ -224,19 +225,20 @@ plot.layout<-"
 avg.scree+scree.cum+plot_layout(design=plot.layout)
 
 pc.novar<-prcomp(beer_novar.fac[,-7],scale=TRUE)
+pc.novar$rotation<- -1*pc.novar$rotation
 pc.novar$rotation
-#biplot(pc.novar, scale=0)
+biplot(pc.novar, scale=0)
 pc.novar_var<-pc.novar$sdev^2
 pve.novar<-pc.novar_var/sum(pc.novar_var)
 x.novar<-c(1:length(pve.novar))
 pve.novar.df<-data.frame(pve.novar,x.novar)
-scree.novar<-ggplot(pve.novar.df, aes(x=x.novar, pve.novar))+goem_line()+geom_point()
-cum.pve.novar<-cumsum(pve.novar)
-cum.novar.df<-data.frame(cum.pve.novar, x.novar)
-cum.scree.novar<-ggplot(cum.novar.df, aes(x=x.novar, y=cum.pve.novar))
+scree.novar<-ggplot(pve.novar.df, aes(x=x.novar, pve.novar))+geom_line()+geom_point()
+cumsum(pve.novar)
+cum.novar.df<-data.frame(cumsum(pve.novar), x.novar)
+cum.scree.novar<-ggplot(cum.novar.df, aes(x=x.novar, y=cumsum.pve.novar.))+geom_line()+geom_point()
 
 scree.novar+cum.scree.novar+plot_layout(design=plot.layout)
-
+pc.novar$rotation
 ######This doesn't really work :(
 beer.clean.factor<-beer.clean%>%mutate(beer_style=as.factor(beer_style),beer_name=as.factor(beer_name))
 
@@ -251,10 +253,10 @@ detach(beer_avg)
 
 #80-20 split for training and testing data
 set.seed(42069)
-train<-sample(c(1:nrow(beer_avg)),floor(0.80 * nrow(beer_avg)))
+train<-sample(c(1:nrow(beer_avg.fac_style)),floor(0.80 * nrow(beer_avg.fac_style)))
 test<- -train
-beer.train<-beer_avg[train,]
-beer.test<-beer_avg[test,]
+beer.train<-beer_avg.fac_style[train,]
+beer.test<-beer_avg.fac_style[test,]
 
 #50/50 splot for training and testing data
 set.seed(42069)
@@ -262,3 +264,83 @@ train<-sample(c(1:nrow(beer_avg)),floor(nrow(beer_avg)/2))
 test<- -train
 beer.train<-beer_avg[train,]
 beer.test<-beer_avg[test,]
+
+
+#trying to do hierarchical clustering:
+
+hc.complete <- hclust(dist(beer.train), method = "complete")
+hc.average <- hclust(dist(beer.train), method = "average")
+hc.single <- hclust(dist(beer.train), method = "single")
+
+#classification tree
+attach(beer.train)
+library ( tree )
+beer.tree<-tree(beer_name~., beer.train)
+summary(beer.tree)
+
+kmeans.beer<-kmeans(beer.train, 100)
+plot(beer.train)
+
+
+#performing K means clustering on all the numeric data, then finding the most similar beers within the cluster to make our reccomendations
+
+numeric_df <- beer_avg %>%
+  select(beer_abv, n_reviews, review_overall, review_aroma, review_appearance, review_palate, review_taste, total_average_score)
+
+# Normalize the data
+numeric_df <- scale(numeric_df)
+
+set.seed(123) # Set seed for reproducibility
+wss <- (nrow(numeric_df)-1)*sum(apply(numeric_df,2,var))
+for (i in 2:100) wss[i] <- sum(kmeans(numeric_df, centers=i)$withinss)
+plot(1:100, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
+
+
+set.seed(123) # Set seed for reproducibility
+kmeans_result <- kmeans(numeric_df, centers=100)
+
+# Add the cluster assignments back to the original data
+beer_avg$cluster <- kmeans_result$cluster
+
+
+
+get_cluster_beers <- function(beer_name, N = 5) {
+  beer_cluster <- beer_avg$cluster[which(beer_avg$beer_name == beer_name)]
+  print(paste("Cluster for", beer_name, ":", beer_cluster))
+  
+  # Filter beers in the same cluster without excluding the input beer
+  same_cluster_beers <- beer_avg %>%
+    filter(cluster == beer_cluster)
+  
+  print(paste("Total beers in the same cluster:", nrow(same_cluster_beers)))
+  
+  
+  cluster_beers <- same_cluster_beers[same_cluster_beers$beer_name != beer_name, ]
+  
+  
+  print(paste("Other beers in the same cluster:", nrow(cluster_beers)))
+  
+  if (nrow(cluster_beers) > 0) {
+    # Extract numeric features for the given beer and the other beers in the cluster
+    beer_features <- matrix(as.numeric(beer_avg[beer_avg$beer_name == beer_name, c(3,4,5,7,9,11,13,15)]), nrow = 1)
+    # Compute distances from the given beer to all other beers in the cluster
+    distances <- sapply(1:nrow(cluster_beers), function(i) {
+      cluster_features <- as.matrix(cluster_beers[i, c(3,4,5,7,9,11,13,15)])
+    dist(rbind(beer_features, cluster_features))
+    })
+    
+    print(paste("Number of distances calculated:", length(distances)))
+    
+    # Select the N beers with the smallest distances
+    closest_beers <- cluster_beers$beer_name[order(distances)[1:N]]
+    
+    print(paste("Number of recommendations:", length(closest_beers)))
+    
+    return(closest_beers)
+  } else {
+    return(character(0))
+  }
+}
+
+get_cluster_beers("Coors",10)
+
