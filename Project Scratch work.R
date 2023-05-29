@@ -34,7 +34,7 @@ head(beer)
 #We will remove some of the non-important variables, but we may need them for later
 beer_map<-select(beer, brewery_id,brewery_name, beer_name, beer_beerid, beer_style, beer_abv)
 #removing some of the unnecessary columns in the dataset
-beer.clean<-select(beer,-review_profilename, -brewery_name, -brewery_id,-beer_beerid, -review_time)
+beer.clean<-select(beer,-review_profilename, -brewery_id,-beer_beerid, -review_time)
 #a lot of abv values were missing so we need to take care of those
 #filling in the missing values that we can from other reviews of the same beer
 beer.clean <- beer.clean %>%
@@ -47,7 +47,7 @@ beer.clean<-beer.clean%>%
 
 
 #this will be useful later
-map2<-select(beer_map, beer_name, beer_style)
+map2<-select(beer_map, beer_name, beer_style, brewery_name)
 map2<-map2%>%distinct(beer_name,.keep_all = TRUE)
 
 ##condensing the data down to what we want
@@ -88,12 +88,11 @@ beer_avg.nosd<-beer_avg.nosd%>%
   add_column(n_reviews=beer_n$n)
 #ordering the columns in a way that it is easy to view raw
 beer_avg<-beer_avg%>%
-  select(beer_name, beer_style, beer_abv, 
+  select(beer_name,brewery_name, beer_style, beer_abv, 
     n_reviews, review_overall, review_overall_sd, review_aroma, 
     review_aroma_sd, review_appearance, review_appearance_sd, review_palate, 
     review_palate_sd,  review_taste, review_taste_sd)
 beer_avg<-beer_avg%>%mutate(beer_avg, total_average_score= (review_overall+review_aroma+review_appearance+review_palate+review_taste)/5)
-
 head(beer_avg)
 View(beer_avg)
 
@@ -297,7 +296,7 @@ plot(1:100, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of
 
 
 set.seed(123) # Set seed for reproducibility
-kmeans_result <- kmeans(numeric_df, centers=440, iter.max = 100)
+kmeans_result <- kmeans(numeric_df, centers=100, iter.max = 100)
 
 # Add the cluster assignments back to the original data
 beer_avg$cluster <- kmeans_result$cluster
@@ -306,7 +305,7 @@ beer_avg$cluster <- kmeans_result$cluster
 
 get_cluster_beers <- function(beer_name, N = 5) {
   beer_cluster <- beer_avg$cluster[which(beer_avg$beer_name == beer_name)]
-  print(paste("Cluster for", beer_name, ":", beer_cluster))
+  print(paste("Cluster for", beer_name, "(Brewery:",beer_avg$brewery_name[which(beer_avg$beer_name == beer_name)], "):", beer_cluster))
   
   # Filter beers in the same cluster without excluding the input beer
   same_cluster_beers <- beer_avg %>%
@@ -322,14 +321,13 @@ get_cluster_beers <- function(beer_name, N = 5) {
   
   if (nrow(cluster_beers) > 0) {
     # Extract numeric features for the given beer and the other beers in the cluster
-    beer_features <- matrix(as.numeric(beer_avg[beer_avg$beer_name == beer_name, c(3,4,5,7,9,11,13,15)]), nrow = 1)
+    beer_features <- matrix(as.numeric(beer_avg[beer_avg$beer_name == beer_name, c(4,5,6,8,10,12,14,16)]), nrow = 1)
     # Compute distances from the given beer to all other beers in the cluster
     distances <- sapply(1:nrow(cluster_beers), function(i) {
-      cluster_features <- as.matrix(cluster_beers[i, c(3,4,5,7,9,11,13,15)])
+      cluster_features <- as.matrix(cluster_beers[i, c(4,5,6,8,10,12,14,16)])
     dist(rbind(beer_features, cluster_features))
     })
     
-    print(paste("Number of distances calculated:", length(distances)))
     
     # Select the N beers with the smallest distances
     closest_beers <- cluster_beers$beer_name[order(distances)[1:N]]
@@ -343,5 +341,13 @@ get_cluster_beers <- function(beer_name, N = 5) {
 }
 
 get_cluster_beers("Coors")
-get_cluster_beers("Natural Light",10)
+get_cluster_beers("Modelo Especial")
+get_cluster_beers("Pacífico")
+get_cluster_beers("Pacifico Light")
+get_cluster_beers("Corona Extra")
+get_cluster_beers("Corona Light")
+get_cluster_beers("Rainier Lager")
+get_cluster_beers("Bud Light")
+get_cluster_beers("Bud Light Lime")
+get_cluster_beers("Blue Moon Belgian White")
 
