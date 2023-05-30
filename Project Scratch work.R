@@ -15,6 +15,7 @@ conflicts_prefer(dplyr::select)
 conflicts_prefer(dplyr::filter)
 conflicted::conflicts_prefer(dplyr::rename)
 
+
 #so cam can use his python
 #install.packages("reticulate")
 #library(reticulate)
@@ -96,6 +97,10 @@ beer_avg<-beer_avg%>%mutate(beer_avg, total_average_score= (review_overall+revie
 head(beer_avg)
 View(beer_avg)
 
+
+
+#### Extra Data manipulation ####
+
 #need this for PCA
 beer_avg.df<-column_to_rownames(beer_avg,var="beer_name")
 head(beer_avg.df)
@@ -136,6 +141,8 @@ beer_name.list<-split(beer.clean, beer.clean$beer_name)
 #beer_by_style<-column_to_rownames(beer_by_style,var='beer_style')
 #View(beer_by_style)
 #length(beer_by_style$beer_abv)
+
+
 
 
 ###################
@@ -281,6 +288,8 @@ kmeans.beer<-kmeans(beer.train, 100)
 plot(beer.train)
 
 
+#### This works ####
+
 #performing K means clustering on all the numeric data, then finding the most similar beers within the cluster to make our reccomendations
 
 numeric_df <- beer_avg %>%
@@ -291,19 +300,19 @@ numeric_df <- scale(numeric_df)
 
 set.seed(123) # Set seed for reproducibility
 wss <- (nrow(numeric_df)-1)*sum(apply(numeric_df,2,var))
-for (i in 2:100) wss[i] <- sum(kmeans(numeric_df, centers=i)$withinss)
-plot(1:100, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
+for (i in 2:400) wss[i] <- sum(kmeans(numeric_df, centers=i)$withinss)
+plot(1:400, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
 
 
-set.seed(123) # Set seed for reproducibility
-kmeans_result <- kmeans(numeric_df, centers=100, iter.max = 100)
+set.seed(42069) # Set seed for reproducibility
+kmeans_result <- kmeans(numeric_df, centers=40, iter.max = 100)
 
 # Add the cluster assignments back to the original data
 beer_avg$cluster <- kmeans_result$cluster
 
 
 
-get_cluster_beers <- function(beer_name, N = 5) {
+beer_recommend <- function(beer_name, N = 5) {
   beer_cluster <- beer_avg$cluster[which(beer_avg$beer_name == beer_name)]
   print(paste("Cluster for", beer_name, "(Brewery:",beer_avg$brewery_name[which(beer_avg$beer_name == beer_name)], "):", beer_cluster))
   
@@ -311,13 +320,10 @@ get_cluster_beers <- function(beer_name, N = 5) {
   same_cluster_beers <- beer_avg %>%
     filter(cluster == beer_cluster)
   
-  print(paste("Total beers in the same cluster:", nrow(same_cluster_beers)))
-  
-  
   cluster_beers <- same_cluster_beers[same_cluster_beers$beer_name != beer_name, ]
-  
-  
+
   print(paste("Other beers in the same cluster:", nrow(cluster_beers)))
+  
   
   if (nrow(cluster_beers) > 0) {
     # Extract numeric features for the given beer and the other beers in the cluster
@@ -340,14 +346,14 @@ get_cluster_beers <- function(beer_name, N = 5) {
   }
 }
 
-get_cluster_beers("Coors")
-get_cluster_beers("Modelo Especial")
-get_cluster_beers("Pacífico")
-get_cluster_beers("Pacifico Light")
-get_cluster_beers("Corona Extra")
-get_cluster_beers("Corona Light")
-get_cluster_beers("Rainier Lager")
-get_cluster_beers("Bud Light")
-get_cluster_beers("Bud Light Lime")
-get_cluster_beers("Blue Moon Belgian White")
+beer_recommend("Coors")
+beer_recommend("Modelo Especial")
+beer_recommend("Pacífico")
+beer_recommend("Pacifico Light")
+beer_recommend("Corona Extra")
+beer_recommend("Corona Light")
+beer_recommend("Rainier Lager")
+beer_recommend("Bud Light")
+beer_recommend("Bud Light Lime")
+beer_recommend("Blue Moon Belgian White")
 
