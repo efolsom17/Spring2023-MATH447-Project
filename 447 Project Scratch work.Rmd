@@ -48,6 +48,17 @@ We will also be using clustering methods to identify any natural groupings in th
 Overall, we will use a combination of classification and clustering methods to develop models that can accurately predict the popularity of beers based their given (part attributes.
 
 
+## Results:
+
+
+
+
+
+
+## Limitations:
+
+
+
 
 
 
