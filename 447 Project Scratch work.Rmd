@@ -1,31 +1,60 @@
 ---
-title: "447 Project Scratch Work"
-author: "Eric Folsom"
-date: "2023-04-21"
+title: "Predicting the Popularity of Different Beers"
+author: "Eric Folsom, Delaney Green, Cameron Bayer, Eva Halsne"
+date: "6/6/2023"
 output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-Dataset link: https://www.kaggle.com/datasets/rdoume/beerreviews
 
-Informative Project title: Predicting the Popularity of Different Beers
+## Team Name: Stout-asticians
 
-The team Name: Stout-asticians
+## Dataset link: https://www.kaggle.com/datasets/rdoume/beerreviews
 
-Research Goal (with short description): The goal of this project is to predict the future popularity of beers given certain factors. We will be analyzing a dataset to determine which keywords, type, brand, aroma, style, apperance, taste and so forth affect what beers people prefer. Using this will we create predictions on beer popularity. 
+## Research Goal: 
+The goal of this project is to predict the future popularity of beers given certain factors. We will be analyzing a dataset to determine which keywords, type, brand, aroma, style, apperance, taste and so forth affect what beers people prefer. Using this will we create predictions on beer popularity. 
 
-Note: submit as PDF
+## Abstract:
 
-![image](https://user-images.githubusercontent.com/130256135/232345854-ae249167-e054-46ad-8efe-4823c180d7e3.png)
+Beer and modern statistics share a surprising historical link. If it were not for William S. Gosset, a brewer at Guiness at the turn of the 20th century, we would not have Student's t-test, a hypothesis testing method that we use to this day. As statisticians from Washington state, which grows approximately three quarters of all the hops in the US, we have a natural interest in the creation and quality of beer. In this project, we use a dataset of ~1.5 million reviews from BeerAdvocate, one of the largest and oldest online resources for beer reviews, discussions, and events. By using a combination of classification and regression methods, our project takes a given beer and personal review to predict and recommend future beers to the reviewer.
 
-```{r}
+\newpage
 
-```
 
-# Notes from talking with Kimi
 
-We are gonna treat our data as continous, Try to do classification on the names of the beer. We can do k-nearest neighbors, might be useful. We can use methods from chapter 8.
+## Background:
 
-Sorry took a while for me to commit this, if anyone has any more notes from our meeting on tuesday please include them
+Beer is one of the most popular alcoholic beverages in the world, with a global market worth billions of dollars. Understanding what factors contribute to the popularity of certain beers can be crucial for breweries and other businesses in the industry. With the rise of craft beer culture and the increasing number of beer options available, predicting what beers will be popular in the future can be a valuable tool for businesses looking to stay ahead of trends and improve their product offerings.
+
+Our goal is to use a dataset of beer reviews, to answer the following research question: What factors contribute to the popularity of different types of beers, and can we create a model to predict the future popularity of beers given these factors? Specifically, we will be analyzing the relationship between beer attributes such as keywords, type, brand, aroma, style, appearance, and taste, and the overall popularity of a beer as determined by user reviews. While treating our dataset as continuous we will use classification, K-nearest neighbors and tree based methods to develop models that can predict future popularity based on these attributes.
+
+
+
+
+## Methods: 
+
+The dataset used for this project is a collection of user reviews and ratings for a myriad of beers. The dataset includes various attributes of the beers such as style, aroma, taste, appearance, and overall rating. We will be using this data to predict the popularity of beers based on these attributes. The original dataset contains over 1.5 million reviews in total. However, working with such a large quantity of data is computationally expensive, and as we preprocessed our data, we were able to reduce the number of reviews to around 56,000.
+
+To preprocess the data, we first removed any unnecessary columns to our research such as time of review, then converted categorical variables into dummy variables to be used in our models. Additionally, we wanted to reduce the size of our dataset without compromising the accuracy of a beer’s reviews by removing a subset of a given beer’s reviews. Therefore, we elected to take an average of all reviews for a unique beer in each category and use these values to create one data point. Thus, for each of the 56,857 unique beers in the dataset, there is one review that is representative of all given reviews in the original data. This reduces the size of our data set from 1.5 million to 56,857, which is somewhat more manageable for conducting analysis.
+
+We further separate each beer by style. There are 104 unique styles present in the data set, and we are creating graphs and performing analysis within each style of beer. One benefit to this is that our graphs will be easier to interpret (and also feasible to graph in R for some computers), and more significantly, this helps ensure our analysis is useful in application. For example, if a dark beer such as a Russian imperial stout has a high overall review rating, it would make sense to compare its taste and aroma to other dark beers of the same style to draw inferences about why it is well-liked instead of comparing it to a light lager beer, which often has a completely different flavor profile and should not be held to the same standards. Additionally, some beer drinkers may have strong preferences for beer styles, and to ensure they are recommended a beer they like, it is best to recommend beers within a style they enjoy.
+
+For classification, we will be using two different methods: K-nearest neighbors (KNN) and tree-based methods. KNN works by identifying the k closest data points to a new observation and using the most common class among those k neighbors to predict the class of the new observation. Tree-based methods, such as decision trees and random forests, work by recursively splitting the data based on the most informative attributes until the data is partitioned into homogeneous subsets.
+
+We will also be using clustering methods to identify any natural groupings in the data. Specifically, we will use K-means clustering to group beers based on their attributes. K-means clustering works by assigning each observation to the nearest cluster center and iteratively updating the center until convergence.
+
+Overall, we will use a combination of classification and clustering methods to develop models that can accurately predict the popularity of beers based their given (part attributes.
+
+
+
+
+
+\newpage
+
+## R Code:
+
+
+
+
