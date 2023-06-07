@@ -10,6 +10,7 @@ library(GGally)
 library(randomForest)
 library(reshape)
 library(patchwork)
+library(glmnet)
 
 conflicts_prefer(dplyr::select)
 conflicts_prefer(dplyr::filter)
@@ -290,28 +291,159 @@ plot(beer.train)
 
 #### This works ####
 
-#performing K means clustering on all the numeric data, then finding the most similar beers within the cluster to make our reccomendations
+#selecting only the numeric predictors
 
 numeric_df <- beer_avg %>%
   select(beer_abv, n_reviews, review_overall, review_aroma, review_appearance, review_palate, review_taste, total_average_score)
+numeric_df<-data.frame(numeric_df)
+
+#lasso regression to predict the overall review
+
+set.seed(11)
+#Number of times we regenerate training sets
+B<-1000
+#initializing empty vectors for storing results
+lasso01mat<-double()
+lassobetamat<-double()
+mse.lasso<-double()
+
+for (i in 1:B){
+  #Setting a random seed for each iteration
+  set.seed(i+sample(1:B,1))
+  
+  #splitting the data into training and testing sets
+  train<-sample(1:dim(numeric_df)[1], dim(numeric_df)[1]*.8)
+  test<- -train
+  beer.train<-numeric_df[train,]
+  beer.test<-numeric_df[test,]
+  
+  train.mat<-model.matrix(review_overall ~. -total_average_score, data=beer.train)[,-1]
+  test.mat<-model.matrix(review_overall~. -total_average_score, data=beer.test)[,-1]
+  #Fitting lasso regression on the training set
+  #note alpha = 1 is default
+  fit.lasso<-glmnet(train.mat,beer.train$review_overall, alpha=1)
+  #performing cross-fold validation, default is 10 fold
+  cv.lasso<-cv.glmnet(train.mat,beer.train$review_overall, alpha=1)
+  #choosing the minimum lambda value
+  bestlam.lasso<-cv.lasso$lambda.min
+  bestlam.lasso
+  #predicted values and MSE calculations
+  pred.lasso<-predict(fit.lasso, s=bestlam.lasso, newx=test.mat)
+  mse.lasso[i]<-mean((pred.lasso-beer.test$review_overall)^2)
+  #storing the beta coefficients
+  beta.lasso<-predict(fit.lasso, s=bestlam.lasso, type="coefficients")
+  lassobetamat<-rbind(lassobetamat, beta.lasso[-1,1])
+  #storing whether or not the explanatory variable was included in the model
+  #stored as a 1 if it is included and a 0 if it is not included
+  lasso01<-as.integer(abs(beta.lasso[-1,1])>0)
+  lasso01mat<-rbind(lasso01mat,lasso01)
+}
+#naming the columns of the matricies of the magnitude of coefficients or if 
+#predictor variables were chosen to match the original data
+colnames(lasso01mat)<-colnames(numeric_df)[c(-8,-3)]
+colnames(lassobetamat)<-colnames(numeric_df)[c(-3,-8)]
+## ----coefficient_prob--------------------------------------------------------------------------------------------------------------------------------
+colMeans(lasso01mat)
+## ----coefficeint_average_value-----------------------------------------------------------------------------------------------------------------------
+colMeans(lassobetamat)
+## ----average_mse-------------------------------------------------------------------------------------------------------------------------------------
+mean(mse.lasso)
+## ----ranking_explanatory_varaibles-------------------------------------------------------------------------------------------------------------------
+colMeans(lasso01mat)*colMeans(lassobetamat)
+
+
+#performing lasso regression to predict the total average score
+##Not gonna do this because it is not an actual row of data in our dataset.
+
+set.seed(11)
+#Number of times we regenerate training sets
+B<-1000
+#initializing empty vectors for storing results
+lasso01mat<-double()
+lassobetamat<-double()
+mse.lasso<-double()
+
+for (i in 1:B){
+  #Setting a random seed for each iteration
+  set.seed(i+sample(1:B,1))
+  
+  #splitting the data into training and testing sets
+  train<-sample(1:dim(numeric_df)[1], dim(numeric_df)[1]*.8)
+  test<- -train
+  beer.train<-numeric_df[train,]
+  beer.test<-numeric_df[test,]
+  
+  train.mat<-model.matrix(total_average_score ~. -review_overall, data=beer.train)[,-1]
+  test.mat<-model.matrix(total_average_score~. -review_overall, data=beer.test)[,-1]
+  #Fitting lasso regression on the training set
+  #note alpha = 1 is default
+  fit.lasso<-glmnet(train.mat,beer.train$review_overall, alpha=1)
+  #performing cross-fold validation, default is 10 fold
+  cv.lasso<-cv.glmnet(train.mat,beer.train$review_overall, alpha=1)
+  #choosing the minimum lambda value
+  bestlam.lasso<-cv.lasso$lambda.min
+  bestlam.lasso
+  #predicted values and MSE calculations
+  pred.lasso<-predict(fit.lasso, s=bestlam.lasso, newx=test.mat)
+  mse.lasso[i]<-mean((pred.lasso-beer.test$review_overall)^2)
+  #storing the beta coefficients
+  beta.lasso<-predict(fit.lasso, s=bestlam.lasso, type="coefficients")
+  lassobetamat<-rbind(lassobetamat, beta.lasso[-1,1])
+  #storing whether or not the explanatory variable was included in the model
+  #stored as a 1 if it is included and a 0 if it is not included
+  lasso01<-as.integer(abs(beta.lasso[-1,1])>0)
+  lasso01mat<-rbind(lasso01mat,lasso01)
+}
+#naming the columns of the matricies of the magnitude of coefficients or if 
+#predictor variables were chosen to match the original data
+colnames(lasso01mat)<-colnames(numeric_df)[c(-8,-3)]
+colnames(lassobetamat)<-colnames(numeric_df)[c(-3,-8)]
+## ----coefficient_prob--------------------------------------------------------------------------------------------------------------------------------
+colMeans(lasso01mat)
+## ----coefficeint_average_value-----------------------------------------------------------------------------------------------------------------------
+colMeans(lassobetamat)
+## ----average_mse-------------------------------------------------------------------------------------------------------------------------------------
+mean(mse.lasso)
+## ----ranking_explanatory_varaibles-------------------------------------------------------------------------------------------------------------------
+colMeans(lasso01mat)*colMeans(lassobetamat)
+
+
+
+
+#performing K means clustering on all the numeric data, then finding the most similar beers within the cluster to make our reccomendations
 
 # Normalize the data
 numeric_df <- scale(numeric_df)
 
+
 set.seed(123) # Set seed for reproducibility
 wss <- (nrow(numeric_df)-1)*sum(apply(numeric_df,2,var))
-for (i in 2:400) wss[i] <- sum(kmeans(numeric_df, centers=i)$withinss)
+old_wss <- Inf
+for (i in 2:400) {
+  wss[i] <- sum(kmeans(numeric_df, centers=i)$withinss)
+  percentage_decrease <- ((old_wss - wss[i]) / old_wss) * 100
+  if (i > 1 && !is.nan(percentage_decrease) && percentage_decrease < 5) {
+    break
+  }
+  old_wss <- wss[i]
+}
+optimal_k <- which.min(wss)
+
+percentage_decrease <- diff(wss) / head(wss, -1) * 100
 plot(1:400, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
 
 
 set.seed(42069) # Set seed for reproducibility
-kmeans_result <- kmeans(numeric_df, centers=40, iter.max = 100)
+kmeans_result <- kmeans(numeric_df, centers=optimal_k, iter.max = 100)
 
 # Add the cluster assignments back to the original data
 beer_avg$cluster <- kmeans_result$cluster
 
 
 
+
+
+#function to recommend beers based on how we clustered them
 beer_recommend <- function(beer_name, N = 5) {
   beer_cluster <- beer_avg$cluster[which(beer_avg$beer_name == beer_name)]
   print(paste("Cluster for", beer_name, "(Brewery:",beer_avg$brewery_name[which(beer_avg$beer_name == beer_name)], "):", beer_cluster))
