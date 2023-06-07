@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Dataset link: https://www.kaggle.com/datasets/rdoume/beerreviews
 
 ## Research Goal: 
-The goal of this project is to predict the future popularity of beers given certain factors. We will be analyzing a dataset to determine which keywords, type, brand, aroma, style, apperance, taste and so forth affect what beers people prefer. Using this will we create predictions on beer popularity. 
+The goal of this project is to predict the future popularity of beers given certain factors. We will be analyzing a dataset to determine which keywords, type, brand, aroma, style, appearance, taste and so forth affect what beers people prefer. Using this will we create predictions on beer popularity. 
 
 ## Abstract:
 
@@ -50,6 +50,9 @@ Overall, we will use a combination of classification and clustering methods to d
 
 ## Results:
 
+
+
+\includegraphics[]{heatmap_plot.png}
 
 
 
