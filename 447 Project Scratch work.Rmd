@@ -60,7 +60,13 @@ Overall, we will use a combination of classification and clustering methods to d
 
 ## Limitations:
 
+There are several limitations to consider in our project. Firstly, the reduction of the dataset from over 1.5 million reviews to 44,085 may lead to a loss of valuable information. Although this reduction was necessary to handle computational limitations, it could potentially result in a less comprehensive analysis. 
 
+Additionally, by taking the average of all reviews for a unique beer in each category, we create one representative data point per beer. While this helps reduce the dataset size, it overlooks potential variations within a beer's reviews, potentially oversimplifying the analysis. (We ended up not utilizing this new Total_Average variable, however, in a more detailed analysis in which this new column could be used, this would be a limitation.)
+
+Furthermore, the choice of classification method, specifically K-nearest neighbors (KNN), and the use of Lasso regression introduce potential limitations. For example, KNN relies heavily on the choice of the number of neighbors (k) and the distance metric used, which can significantly impact the predictions. Regarding Lasso regression, it is a widely used method for feature selection and regularization. However, Lasso regression tends to shrink coefficients towards zero, leading to sparsity in the model and potentially overlooking important attributes. This can result in biased predictions and the exclusion of relevant variables from the model. 
+
+These limitations should be taken into account when interpreting the results and may require further investigation or refinement of the methodology in future research.
 
 
 
