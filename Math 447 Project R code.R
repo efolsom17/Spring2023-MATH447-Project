@@ -177,7 +177,7 @@ wss2 <- (nrow(numeric_df)-1)*sum(apply(numeric_df,2,var))
 for (i in 2:100) {
   wss2[i] <- sum(kmeans(numeric_df, centers=i)$withinss)
 }
-plot(1:400, wss2, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
+plot(1:100, wss2, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
 
 ## Finding the "optimal" K by seeing which value of K decreases the WSS by less than 5%
 set.seed(1234) 
@@ -248,5 +248,5 @@ beer_recommend("Rainier Lager")
 beer_recommend("Bud Light")
 beer_recommend("Bud Light Lime")
 beer_recommend("Blue Moon Belgian White")
-
+beer_recommend("Wainwright")
 View(beer_avg)
