@@ -40,7 +40,7 @@ The dataset used for this project is a collection of user reviews and ratings fo
 	For classification, we will be using K-nearest neighbors (KNN). KNN works by identifying the k closest data points to a new observation and using the most common class among those k neighbors to predict the class of the new observation. 
 We will also be using clustering methods to identify any natural groupings in the data. Specifically, we will use K-means clustering to group beers based on their attributes. K-means clustering works by assigning each observation to the nearest cluster center and iteratively updating the center until convergence.
 Additionally, we will be using Lasso Regression. By doing so we can employ a shrinkage method which allows us to narrow down the suggestions in which our models give. In turn we have more accurate suggestions.
-	Another facet of this model is the use of item based collaborative filtering. This encouraged the grouping of like beers by finding the similarity, while narrowing the mass amount of data used.
+	Another facet of this model is the use of item based collaborative filtering. Item-based collaborative filtering analyzes similarities between items based on user behavior or item characteristics to provide personalized recommendations. In the case of this project, our items are different kinds of beer, and the characteristics are a pre-specified list of features. This approach encompasses gathering data, computing item similarities, identifying similar beers, predicting user preferences and  generating recommendations.
 	Overall, we will use a combination of clustering and regression methods to develop models that can accurately predict the popularity of beers based on their given scores. 
 
 
