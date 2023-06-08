@@ -298,7 +298,6 @@ numeric_df <- beer_avg %>%
 numeric_df<-data.frame(numeric_df)
 
 #lasso regression to predict the overall review
-
 set.seed(11)
 #Number of times we regenerate training sets
 B<-1000
@@ -416,7 +415,7 @@ colMeans(lasso01mat)*colMeans(lassobetamat)
 numeric_df <- scale(numeric_df)
 
 
-set.seed(123) # Set seed for reproducibility
+set.seed(1234) 
 wss <- (nrow(numeric_df)-1)*sum(apply(numeric_df,2,var))
 old_wss <- Inf
 for (i in 2:400) {
@@ -429,19 +428,19 @@ for (i in 2:400) {
 }
 optimal_k <- which.min(wss)
 
-percentage_decrease <- diff(wss) / head(wss, -1) * 100
-plot(1:400, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
+set.seed(1234) 
+wss2 <- (nrow(numeric_df)-1)*sum(apply(numeric_df,2,var))
+for (i in 2:400) {
+  wss2[i] <- sum(kmeans(numeric_df, centers=i)$withinss)
+}
+plot(1:400, wss2, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
 
 
-set.seed(42069) # Set seed for reproducibility
+set.seed(42069) 
 kmeans_result <- kmeans(numeric_df, centers=optimal_k, iter.max = 100)
 
 # Add the cluster assignments back to the original data
 beer_avg$cluster <- kmeans_result$cluster
-
-
-
-
 
 #function to recommend beers based on how we clustered them
 beer_recommend <- function(beer_name, N = 5) {
