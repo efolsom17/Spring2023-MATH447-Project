@@ -6,3 +6,5 @@ Please read the first paragraph of the R markdown file. I will do my best to exp
 You can view the Rmarkdown file by clicking on it and edit it by clicking on the pencil/pen (whatever the you decide it is, idk you have the free will do decide what it is), to edit the code. Also please check out the "Projects" tab to see my basic af outline of the project, make changes to it as you wish. There is a discussion page where we can share datasets. I would prefer that we use data which we can use an R package/python to scrape the data (that would look good on a resume I think, idk might be very wrong on that) as our dataset.
 
 The data set we are choosing is: https://www.kaggle.com/datasets/rdoume/beerreviews?resource=download
+
+In this project we used K-means clustering to develop a beer reccomendation tool using data data from beer reviews.
